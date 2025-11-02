@@ -1,0 +1,28 @@
+{
+  "name": "testgen-fe",
+  "version": "0.2.0",
+  "description": "Frontend for TestGen - AI-powered test case generation",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite preview --port 3000",
+    "serve:dev": "vite --host",
+    "serve:prod": "python3 -m http.server 3000 --directory dist"
+  },
+  "devDependencies": {
+    "terser": "^5.44.0",
+    "vite": "^5.0.0"
+  },
+  "keywords": [
+    "testgen",
+    "test-generation",
+    "ai",
+    "rag",
+    "openai"
+  ],
+  "author": "Your Organization",
+  "license": "MIT"
+}
