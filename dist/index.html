@@ -6,8 +6,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/js/index-LMZOFR2P.js"></script>
-  <link rel="stylesheet" crossorigin href="/css/index-3hyhA0SA.css">
+  <script type="module" crossorigin src="/js/index-JBN4T_wj.js"></script>
+  <link rel="stylesheet" crossorigin href="/css/index-CydyZ1TU.css">
 </head>
 <body>
   <!-- Navigation Header -->
@@ -20,11 +20,6 @@
       <div class="nav-links">
         <a href="#" class="nav-link active">📊 Dashboard</a>
         <a href="#" class="nav-link">⚡ Generate Tests</a>
-        <a href="#" class="nav-link">📋 Test Suites</a>
-        <a href="#" class="nav-link">🔧 Optimize</a>
-        <a href="#" class="nav-link">💬 Q&A Chat</a>
-        <a href="#" class="nav-link">🔌 API Testing</a>
-        <a href="#" class="nav-link">👁️ Visual Testing</a>
         <a href="#" class="nav-link">📚 Knowledge Base</a>
       </div>
     </div>
@@ -97,20 +92,33 @@ Example:
                 </div>
               </div>
               <div id="uploadStatus" class="upload-status"></div>
+              <div id="docIdDisplay" class="doc-id-display hidden"></div>
             </div>
           </div>
 
-          <!-- LLM Model Selection -->
-          <div class="form-group">
-            <label class="form-label" for="llmModel">AI Model Selection</label>
-            <select id="llmModel" class="form-select">
-              <option value="">Loading models...</option>
-            </select>
-            <p class="form-hint">Choose the AI model for test case generation</p>
+          <!-- Doc ID Field (always visible and editable) -->
+          <div class="form-group" id="docIdGroup">
+            <label class="form-label" for="docId">Document ID (Optional)</label>
+            <input 
+              type="text" 
+              id="docId" 
+              class="form-input" 
+              placeholder="Enter or auto-populated from file upload"
+            />
+            <p class="form-hint">Auto-populated when file is uploaded, or enter manually</p>
           </div>
 
-          <!-- Form Factor and Test Levels Row -->
+          <!-- Form Row: AI Model and Form Factor -->
           <div class="form-row">
+            <!-- LLM Model Selection -->
+            <div class="form-group">
+              <label class="form-label" for="llmModel">AI Model Selection</label>
+              <select id="llmModel" class="form-select">
+                <option value="">Loading models...</option>
+              </select>
+              <p class="form-hint">Choose the AI model for test case generation</p>
+            </div>
+
             <!-- Form Factor -->
             <div class="form-group">
               <label class="form-label" for="formFactor">Form Factor</label>
@@ -122,46 +130,18 @@ Example:
                 <option value="api">API Only</option>
               </select>
             </div>
+          </div>
 
-            <!-- Test Levels -->
-            <div class="form-group">
-              <label class="form-label">Test Levels</label>
-              <div class="checkbox-group">
-                <div class="checkbox-column">
-                  <label class="checkbox-label">
-                    <input type="checkbox" id="selectAll" class="checkbox" checked>
-                    <span class="checkmark"></span>
-                    Select All
-                  </label>
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="testLevel" value="ui_ux" class="checkbox" checked>
-                    <span class="checkmark"></span>
-                    UI/UX
-                  </label>
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="testLevel" value="integration" class="checkbox" checked>
-                    <span class="checkmark"></span>
-                    Integration
-                  </label>
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="testLevel" value="e2e" class="checkbox" checked>
-                    <span class="checkmark"></span>
-                    End to End
-                  </label>
-                </div>
-                <div class="checkbox-column">
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="testLevel" value="unit" class="checkbox" checked>
-                    <span class="checkmark"></span>
-                    Unit Tests
-                  </label>
-                  <label class="checkbox-label">
-                    <input type="checkbox" name="testLevel" value="component" class="checkbox" checked>
-                    <span class="checkmark"></span>
-                    Component
-                  </label>
-                </div>
-              </div>
+          <!-- Test Case Count Slider -->
+          <div class="form-group">
+            <div class="slider-header">
+              <label class="form-label" for="count">Test Case Count</label>
+              <input type="text" id="countInput" class="count-input" value="100" />
+            </div>
+            <input type="range" id="count" class="slider" value="100" min="20" max="200" step="20" />
+            <div class="slider-labels">
+              <span>20</span>
+              <span>200</span>
             </div>
           </div>
 
@@ -174,34 +154,43 @@ Example:
               </button>
             </div>
             <div class="advanced-options hidden" id="advancedOptions">
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label" for="count">Test Case Count</label>
-                  <input type="number" id="count" class="form-input" value="40" min="1" max="200" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="topk">Context Relevance (Top-K)</label>
-                  <input type="number" id="topk" class="form-input" value="12" min="1" max="50" />
-                </div>
-              </div>
+              <!-- Test Levels -->
               <div class="form-group">
-                <label class="form-label" for="docId">Document ID (Optional)</label>
-                <input type="text" id="docId" class="form-input" placeholder="Use specific document ID" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Design Images (Optional) -->
-          <div class="form-group">
-            <label class="form-label">Design Images (Optional)</label>
-            <p class="form-hint">For enhanced UI/UX test generation</p>
-            <div class="image-upload-area">
-              <input type="file" id="designImages" class="file-input" multiple accept="image/*" />
-              <div class="image-upload-placeholder">
-                <div class="upload-icon">🖼️</div>
-                <div class="upload-text">
-                  <span class="upload-primary">Upload design mockups or screenshots</span>
-                  <span class="upload-secondary">PNG, JPG, SVG supported</span>
+                <div class="test-levels-header">
+                  <label class="form-label">Test Levels</label>
+                  <button type="button" id="deselectAll" class="deselect-btn">Deselect All</button>
+                </div>
+                <div class="checkbox-grid">
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="testLevel" value="unit" class="checkbox" checked>
+                    <span class="checkmark"></span>
+                    Unit Tests
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="testLevel" value="integration" class="checkbox" checked>
+                    <span class="checkmark"></span>
+                    Integration
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="testLevel" value="ui_ux" class="checkbox" checked>
+                    <span class="checkmark"></span>
+                    UI/UX
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="testLevel" value="e2e" class="checkbox" checked>
+                    <span class="checkmark"></span>
+                    End to End
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="testLevel" value="negative_edge" class="checkbox" checked>
+                    <span class="checkmark"></span>
+                    Negative/Edge Cases
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" name="testLevel" value="component" class="checkbox" checked>
+                    <span class="checkmark"></span>
+                    Component
+                  </label>
                 </div>
               </div>
             </div>

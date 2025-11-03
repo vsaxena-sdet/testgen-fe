@@ -29,7 +29,11 @@ const elements = {
   fileInput: $('#file'),
   formFactor: $('#formFactor'),
   testLevelCheckboxes: $$('input[name="testLevel"]'),
-  selectAllCheckbox: $('#selectAll'),
+  deselectAllBtn: $('#deselectAll'),
+  
+  // Slider elements
+  countSlider: $('#count'),
+  countInput: $('#countInput'),
   
   // LLM Model selection
   llmModel: $('#llmModel'),
@@ -38,9 +42,6 @@ const elements = {
   advancedToggle: $('#advancedToggle'),
   advancedOptions: $('#advancedOptions'),
   toggleIcon: $('.toggle-icon'),
-  count: $('#count'),
-  topk: $('#topk'),
-  docId: $('#docId'),
   
   // Actions
   form: $('#testGenForm'),
@@ -53,6 +54,9 @@ const elements = {
   
   // Status and results
   uploadStatus: $('#uploadStatus'),
+  docIdDisplay: $('#docIdDisplay'),
+  docIdGroup: $('#docIdGroup'),
+  docIdInput: $('#docId'),
   genStatus: $('#genStatus'),
   resultsSection: $('#resultsSection'),
   latest: $('#latest'),
@@ -75,6 +79,7 @@ function init() {
   setupEventListeners();
   setupFileDropZone();
   setupExportDropdown();
+  setupSliderSync();
   loadLLMModels();
   setupLLMModelHandling();
 }
@@ -103,24 +108,83 @@ function setupSourceSwitching() {
 
 // Checkbox handling for test levels
 function setupCheckboxHandling() {
-  // Select All functionality
-  elements.selectAllCheckbox.addEventListener('change', (e) => {
-    const isChecked = e.target.checked;
-    elements.testLevelCheckboxes.forEach(checkbox => {
-      checkbox.checked = isChecked;
+  // Deselect All functionality
+  if (elements.deselectAllBtn) {
+    elements.deselectAllBtn.addEventListener('click', () => {
+      const allChecked = Array.from(elements.testLevelCheckboxes).every(cb => cb.checked);
+      
+      elements.testLevelCheckboxes.forEach(checkbox => {
+        checkbox.checked = !allChecked;
+      });
+      
+      // Update button text
+      elements.deselectAllBtn.textContent = allChecked ? 'Select All' : 'Deselect All';
     });
-  });
+  }
   
-  // Individual checkbox handling
+  // Update button text when checkboxes change
   elements.testLevelCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', () => {
       const allChecked = Array.from(elements.testLevelCheckboxes).every(cb => cb.checked);
-      const noneChecked = Array.from(elements.testLevelCheckboxes).every(cb => !cb.checked);
-      
-      elements.selectAllCheckbox.checked = allChecked;
-      elements.selectAllCheckbox.indeterminate = !allChecked && !noneChecked;
+      if (elements.deselectAllBtn) {
+        elements.deselectAllBtn.textContent = allChecked ? 'Deselect All' : 'Select All';
+      }
     });
   });
+}
+
+// Slider sync functionality
+function setupSliderSync() {
+  // Sync slider with input and update progress
+  if (elements.countSlider && elements.countInput) {
+    // Update progress bar on slider change
+    const updateSliderProgress = (value) => {
+      const min = parseInt(elements.countSlider.min);
+      const max = parseInt(elements.countSlider.max);
+      const percentage = ((value - min) / (max - min)) * 100;
+      elements.countSlider.style.background = `linear-gradient(to right, #ffffff 0%, #ffffff ${percentage}%, #334155 ${percentage}%, #334155 100%)`;
+    };
+    
+    // Initialize progress
+    updateSliderProgress(elements.countSlider.value);
+    
+    // Slider changes input
+    elements.countSlider.addEventListener('input', (e) => {
+      const value = e.target.value;
+      elements.countInput.value = value;
+      updateSliderProgress(value);
+    });
+    
+    // Input changes slider (with validation)
+    elements.countInput.addEventListener('input', (e) => {
+      let value = parseInt(e.target.value);
+      
+      // Allow empty input while typing
+      if (e.target.value === '') return;
+      
+      // Validate and constrain to valid values (multiples of 20 from 20-200)
+      if (!isNaN(value)) {
+        if (value < 20) value = 20;
+        if (value > 200) value = 200;
+        
+        // Round to nearest 20
+        value = Math.round(value / 20) * 20;
+        
+        elements.countInput.value = value;
+        elements.countSlider.value = value;
+        updateSliderProgress(value);
+      }
+    });
+    
+    // On blur, ensure valid value
+    elements.countInput.addEventListener('blur', (e) => {
+      if (e.target.value === '' || isNaN(parseInt(e.target.value))) {
+        elements.countInput.value = 100;
+        elements.countSlider.value = 100;
+        updateSliderProgress(100);
+      }
+    });
+  }
 }
 
 // Advanced options toggle
@@ -225,7 +289,18 @@ async function handleFileUpload(event) {
     
     if (response.ok) {
       lastDocId = result.doc_id;
-      elements.docId.value = lastDocId;
+      
+      // Display doc_id
+      if (elements.docIdDisplay) {
+        elements.docIdDisplay.innerHTML = `<strong>Doc ID:</strong> ${lastDocId}`;
+        elements.docIdDisplay.classList.remove('hidden');
+      }
+      
+      // Populate doc_id field
+      if (elements.docIdInput) {
+        elements.docIdInput.value = lastDocId;
+      }
+      
       showUploadStatus(`File uploaded successfully! Uploading to Open AI Vector Store in background...`, 'success');
       
       // Update file display
@@ -321,7 +396,7 @@ function validateForm() {
   
   // Check if we have requirements (either text or file)
   const hasText = elements.requirementsText.value.trim();
-  const hasFile = lastDocId || elements.fileInput.files.length > 0;
+  const hasFile = elements.fileInput.files.length > 0;
   const isTextSource = !elements.textSource.classList.contains('hidden');
   
   if (isTextSource && !hasText) {
@@ -355,11 +430,11 @@ function buildRequestData() {
   const requestData = {
     project_name: elements.projectName.value.trim(),
     requirements_text: isTextSource ? elements.requirementsText.value.trim() : null,
-    doc_id: !isTextSource ? (elements.docId.value || lastDocId) : null,
+    doc_id: elements.docIdInput?.value.trim() || null,
     form_factor: elements.formFactor.value,
     test_levels: selectedTestLevels,
-    count: parseInt(elements.count.value) || 40,
-    top_k: parseInt(elements.topk.value) || 12,
+    count: parseInt(elements.countInput?.value || elements.countSlider?.value) || 100,
+    top_k: 12,
     modes: [elements.formFactor.value],
     
     // LLM Model selection
