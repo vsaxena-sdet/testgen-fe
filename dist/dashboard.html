@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Dashboard - TestGenAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/js/dashboard-PTU0vYw-.js"></script>
+  <link rel="modulepreload" crossorigin href="/js/config-3a6Bf74B.js">
+  <link rel="stylesheet" crossorigin href="/css/config-C6Bbcdwq.css">
+</head>
+<body>
+  <!-- Navigation Header -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <span class="brand-icon">🏠</span>
+        <span class="brand-text">TestGenAI</span>
+      </div>
+      <div class="nav-links">
+        <a href="dashboard.html" class="nav-link active">📊 Dashboard</a>
+        <a href="index.html" class="nav-link">⚡ Generate Tests</a>
+        <a href="#" class="nav-link">📚 Knowledge Base</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-container">
+    <div class="content-wrapper">
+      <!-- Header -->
+      <div class="page-header">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Overview of your test generation usage and statistics</p>
+      </div>
+
+      <!-- Main Card -->
+      <div class="main-card">
+        <!-- Usage Statistics -->
+        <div class="dashboard-stats">
+          <h2 class="section-title">Usage Statistics</h2>
+          
+          <!-- Stats Grid -->
+          <div class="stats-grid">
+            <div class="stat-card total-cases">
+              <div class="stat-icon">📄</div>
+              <div class="stat-content">
+                <div class="stat-value" id="totalGenerated">0</div>
+                <div class="stat-label">Total Test Cases Generated</div>
+              </div>
+            </div>
+
+            <div class="stat-card high-priority">
+              <div class="stat-icon">⚡</div>
+              <div class="stat-content">
+                <div class="stat-value" id="totalProjects">0</div>
+                <div class="stat-label">Projects</div>
+              </div>
+            </div>
+
+            <div class="stat-card medium-priority">
+              <div class="stat-icon">🤖</div>
+              <div class="stat-content">
+                <div class="stat-value" id="totalGenerations">0</div>
+                <div class="stat-label">Total Generations</div>
+              </div>
+            </div>
+
+            <div class="stat-card low-priority">
+              <div class="stat-icon">📈</div>
+              <div class="stat-content">
+                <div class="stat-value" id="avgPerGeneration">0</div>
+                <div class="stat-label">Avg. Cases per Generation</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="recent-activity">
+            <h3 class="subsection-title">Recent Activity</h3>
+            <div id="recentActivity" class="activity-list">
+              <p class="no-data">No recent activity</p>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="quick-actions">
+            <h3 class="subsection-title">Quick Actions</h3>
+            <div class="action-buttons">
+              <a href="index.html" class="btn-primary">
+                <span class="btn-icon">⚡</span>
+                Generate New Tests
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

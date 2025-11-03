@@ -10,6 +10,10 @@ export default defineConfig({
     minify: 'terser',
     sourcemap: false,
     rollupOptions: {
+      input: {
+        main: 'public/index.html',
+        dashboard: 'public/dashboard.html'
+      },
       output: {
         entryFileNames: 'js/[name]-[hash].js',
         chunkFileNames: 'js/[name]-[hash].js',
