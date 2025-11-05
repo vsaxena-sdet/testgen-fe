@@ -8,6 +8,9 @@ const API = config.api.endpoints;
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 
+// Generate session ID (once per page load)
+const sessionId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
 // Global state
 let lastDocId = null;
 let isGenerating = false;
@@ -282,6 +285,9 @@ async function handleFileUpload(event) {
     
     const response = await fetch(API.upload, {
       method: 'POST',
+      headers: {
+        'X-Session-ID': sessionId
+      },
       body: formData
     });
     
@@ -364,7 +370,8 @@ async function handleFormSubmit(event) {
     const response = await fetch(API.generate, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-Session-ID': sessionId
       },
       body: JSON.stringify(requestData)
     });
@@ -486,7 +493,11 @@ function setupEventListeners() {
 // Fetch latest results
 async function fetchLatestResults() {
   try {
-    const response = await fetch(API.testcases);
+    const response = await fetch(API.testcases, {
+      headers: {
+        'X-Session-ID': sessionId
+      }
+    });
     const result = await response.json();
     
     if (response.ok) {
@@ -578,7 +589,11 @@ async function exportAsExcel() {
   try {
     showGenerationStatus('📊 Generating Excel file...', 'loading');
     
-    const response = await fetch(API.exportExcel);
+    const response = await fetch(API.exportExcel, {
+      headers: {
+        'X-Session-ID': sessionId
+      }
+    });
     
     if (response.ok) {
       // Get the filename from the response header or generate one
@@ -620,7 +635,11 @@ async function exportAsExcel() {
 // Update statistics
 async function updateStatistics() {
   try {
-    const response = await fetch(API.statistics);
+    const response = await fetch(API.statistics, {
+      headers: {
+        'X-Session-ID': sessionId
+      }
+    });
     if (response.ok) {
       const stats = await response.json();
       
@@ -643,7 +662,11 @@ async function updateStatistics() {
 // LLM Model Management
 async function loadLLMModels() {
   try {
-    const response = await fetch(API.llmModels);
+    const response = await fetch(API.llmModels, {
+      headers: {
+        'X-Session-ID': sessionId
+      }
+    });
     if (response.ok) {
       llmModels = await response.json();
       populateLLMDropdown();
